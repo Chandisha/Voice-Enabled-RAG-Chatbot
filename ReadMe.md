@@ -36,7 +36,7 @@ The communication between the frontend and backend relies on a dynamic tunnel. P
 1. **Dependencies:** Install the required packages using pip install -r requirements.txt.
 2. **Initialize Backend:** Run main.py. Once the models load and the knowledge base is built, copy the public Ngrok URL from the console output.
 3. **Initialize Frontend:** Update the API_URL in app.py with the copied link and execute the script.
-4. **Interface Access:** Open the provided .gradio.live link in a new browser tab. Using an external tab is necessary to ensure the browser correctly prompts for microphone permissions.
+4. **Interface Access:** Open the provided **.gradio.live link in a new browser tab**(this is important). Using an external tab is necessary to ensure the browser correctly prompts for microphone permissions.
 
 ### Development Challenges
 * **Colab Kernel Management:** I implemented parse_known_args to handle the default JSON arguments passed by the Colab kernel, which otherwise interfere with standard command-line argument parsing.
