@@ -4,8 +4,7 @@ import json
 
 # Replace this with the URL printed by your previous cell
 # It should look like: https://xxxx-xx-xx-xx-xx.ngrok-free.app
-API_URL = "https://inimitably-cytotropic-fatimah.ngrok-free.dev" 
-
+API_URL = "INSERT_YOUR_NGROK_URL_HERE"
 def chat_with_rag(audio_path):
     if not audio_path:
         return "Please record or upload an audio file."
