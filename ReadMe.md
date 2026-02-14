@@ -1,71 +1,46 @@
-# 🎙️ Hindi-to-English Voice RAG Chatbot
+# Voice-Enabled Hindi-to-English RAG Chatbot
 
-This project is a modular, voice-enabled Retrieval-Augmented Generation (RAG) pipeline designed for Google Colab. It allows users to speak a query in **Hindi**, which is then transcribed, translated, and answered using a custom knowledge base built dynamically from Wikipedia.
-
-
-
----
-
-### 🌟 Project Workflow
-1.  **Dynamic Knowledge Base:** Scrapes Wikipedia based on a user-defined topic to build a searchable database.
-2.  **Hindi ASR:** Uses AI4Bharat's `indic-conformer` model to accurately transcribe Hindi speech.
-3.  **Sarvam AI Translation:** Converts the Hindi transcription into English for processing.
-4.  **RAG Retrieval:** Uses ChromaDB and LangChain to find relevant facts from the scraped data.
-5.  **Gemma 3 LLM:** Synthesizes the final answer based on the retrieved facts and the user's question.
-
----
-
-### 📂 File Structure Explained
-
-To follow best practices in modularization, the project is split into three files:
-
-* **`main.py` (The Backend):** The core engine. Handles Wikipedia scraping, Vector Database setup, ASR model loading, and the FastAPI server.
-* **`app.py` (The UI):** The Gradio interface. It captures microphone input, sends it to the backend, and displays the response in a "Chat" format.
-* **`requirements.txt`:** Lists all library versions needed to ensure a seamless environment setup.
-
----
-
-### 🛠️ Setup & Secrets (Google Colab)
-
-Since this project relies on sensitive API keys, I have used **Google Colab Secrets** (the 🔑 icon) for security. You must add the following keys to your Colab environment:
-* `SERPAPI_KEY` (Search results)
-* `SARVAM_KEY` (Translation)
-* `HF_TOKEN` (HuggingFace model access)
-* `GOOGLE_API_KEY` (Gemma 3 model)
-* `NGROK_TOKEN` (Public API tunnel)
+This repository contains a modular pipeline designed for Google Colab that implements a Retrieval-Augmented Generation (RAG) system with voice capabilities. The system allows users to provide a topic, builds a local knowledge base from Wikipedia, and answers voice queries spoken in Hindi by transcribing and translating them before generating a response.
 
 
 
----
+### Project Workflow
+1. **Knowledge Acquisition:** The system uses SerpApi to identify relevant Wikipedia pages for a given topic and scrapes the content using BeautifulSoup.
+2. **Speech Recognition:** Spoken Hindi is captured and processed using the AI4Bharat Indic-Conformer model.
+3. **Translation:** The transcribed Hindi text is converted to English via the Sarvam AI translation API.
+4. **Vector Indexing:** English text is split into chunks and stored in a ChromaDB vector database using HuggingFace embeddings.
+5. **Contextual Generation:** Relevant document chunks are retrieved based on the query, and the Gemma 3 LLM synthesizes a final answer grounded in that context.
 
-### ⚠️ IMPORTANT: Connection Guidelines
-To ensure the Frontend and Backend communicate correctly, please note:
+### File Structure
+* **main.py (Backend):** Contains the FastAPI server logic, Wikipedia scraping functions, vector database initialization, and the core ASR/inference pipeline.
+* **app.py (Frontend):** A Gradio-based interface that handles audio recording and communicates with the backend API.
+* **requirements.txt:** A comprehensive list of all dependencies required to replicate the environment.
 
-* **Copy the Link:** When you run `main.py`, it will generate a unique Ngrok URL in the output. **Make sure** you copy this entire URL (including the `https://`).
-* **Update the Variable:** You must manually paste this link into the `API_URL` variable inside `app.py`. Without this step, the UI will not be able to "find" the backend server.
-* **Refresh on Restart:** Remember that every time you restart the backend, a new Ngrok link is generated. **Make sure** to update `app.py` with the fresh link every time.
+### Setup and Secrets (Google Colab)
+To maintain security, I utilized Google Colab Secrets for API key management. Ensure the following keys are configured in your environment:
+* SERPAPI_KEY: Used for Google Search queries.
+* SARVAM_KEY: Used for the translation API.
+* HF_TOKEN: Required for accessing HuggingFace models.
+* GOOGLE_API_KEY: Required for the Gemma 3 generative model.
+* NGROK_TOKEN: Used to create the public tunnel for the FastAPI server.
 
----
 
-### 🚀 How to Run
 
-1.  **Install Dependencies:**
-    `pip install -r requirements.txt`
+### Technical Connection Guidelines
+The communication between the frontend and backend relies on a dynamic tunnel. Please note:
+* **Ngrok URL:** When main.py is executed, it generates a unique public URL. This URL is required for the frontend to locate the backend.
+* **Variable Update:** The generated URL must be manually updated in the API_URL variable within app.py.
+* **Session Persistence:** Restarting the backend will generate a new URL, necessitating an update to the frontend configuration to maintain the connection.
 
-2.  **Start the Backend (`main.py`):**
-    Run this first to initialize the knowledge base and start the server. Look for the output line: `API DEPLOYED AT: https://xxxx.ngrok-free.dev`. **Copy this URL.**
+### Execution Steps
+1. **Dependencies:** Install the required packages using pip install -r requirements.txt.
+2. **Initialize Backend:** Run main.py. Once the models load and the knowledge base is built, copy the public Ngrok URL from the console output.
+3. **Initialize Frontend:** Update the API_URL in app.py with the copied link and execute the script.
+4. **Interface Access:** Open the provided .gradio.live link in a new browser tab. Using an external tab is necessary to ensure the browser correctly prompts for microphone permissions.
 
-3.  **Start the UI (`app.py`):**
-    Open `app.py`, paste your copied URL into the `API_URL` variable, and run the script.
+### Development Challenges
+* **Colab Kernel Management:** I implemented parse_known_args to handle the default JSON arguments passed by the Colab kernel, which otherwise interfere with standard command-line argument parsing.
+* **Audio Processing:** The Indic-Conformer model requires a specific 16kHz sampling rate. I added a resampling layer using torchaudio to normalize inputs from various microphones.
+* **Tunnel Interstitials:** Ngrok often displays a warning page for free-tier users. I resolved this by including the ngrok-skip-browser-warning header in all API requests to allow seamless automated communication.
 
-4.  **Use the External Gradio Link:**
-    For the microphone to work properly, **click the public Gradio link** (ending in `.gradio.live`). Using it in a separate browser tab ensures microphone permissions are handled correctly by your browser.
-
----
-
-### 🧠 Challenges I Addressed
-* **Kernel Arguments:** I used `parse_known_args()` to prevent the script from crashing due to the hidden background arguments Colab passes to its own kernel.
-* **Audio Sampling:** The AI4Bharat ASR model is very strict about a **16kHz** sample rate. I implemented a resampling step in the backend using `torchaudio` to ensure user microphone input is always compatible.
-* **API Tunneling:** Using Ngrok with FastAPI required a specific header (`ngrok-skip-browser-warning`) to ensure the frontend could talk to the backend without being blocked by Ngrok's security landing page.
-
----
+This project was built to demonstrate the integration of multi-lingual ASR, machine translation, and RAG in a cloud-hosted environment.
