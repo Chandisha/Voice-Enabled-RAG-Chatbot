@@ -1,0 +1,33 @@
+# Web Server & Tunneling
+fastapi==0.115.0
+uvicorn==0.30.6
+pyngrok==7.2.0
+nest-asyncio==1.6.0
+python-multipart==0.0.9
+requests==2.32.3
+
+# Audio Processing & AI4Bharat ASR
+torch==2.4.0
+torchaudio==2.4.0
+transformers==4.44.2
+huggingface_hub==0.24.6
+onnx==1.16.2
+onnxruntime-gpu==1.19.2
+
+# Sarvam AI & Translation
+sarvamai==0.0.5
+
+# Knowledge Base & Vector DB (RAG)
+beautifulsoup4==4.12.3
+langchain==0.2.14
+langchain-community==0.2.12
+langchain-text-splitters==0.2.2
+langchain-huggingface==0.0.3
+langchain-chroma==0.1.2
+sentence-transformers==3.0.1
+
+# Generative AI (Google Gemma)
+google-generativeai==0.7.2
+
+# User Interface (Bonus Task)
+gradio==4.42.0
